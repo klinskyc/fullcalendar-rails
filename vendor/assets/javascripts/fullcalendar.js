@@ -9774,13 +9774,33 @@ function Calendar_constructor(element, overrides) {
 		fetchEventSources(t.getEventSourcesByMatchArray(matchInputs));
 	}
 
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
+	var debouncedDisplayEvents = debounce(function() {
+		console.log("walla");
+    freezeContentHeight();
+    currentView.displayEvents(events);
+    unfreezeContentHeight();
+	}, 50);
 
 	function renderEvents() { // destroys old events if previously rendered
+		console.log("holla")
 		if (elementVisible()) {
-			freezeContentHeight();
-			currentView.displayEvents(events);
-			unfreezeContentHeight();
-		}
+        debouncedDisplayEvents()
+    }
 	}
 	
 
